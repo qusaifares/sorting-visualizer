@@ -4,24 +4,25 @@ class Visual extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      numbers: []
+      numbers: [],
+      time: 20,
+      done: false
     };
   }
 
   componentDidMount() {
-    let newArray = [];
-    for (let i = 0; i < 30; i++) {
-      let num = Math.floor(Math.random() * 85) + 10;
-      newArray.push({ number: num, beingSorted: false });
+    this.setState({ numbers: this.props.numbers });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.startSort === false && this.props.startSort === true) {
+      this.bubbleSort();
     }
-    this.setState({ numbers: newArray });
   }
 
   bubbleSort = arr => {
     let sortedArray = this.state.numbers;
     let swap = true;
-
-    let time = 100;
     while (swap) {
       swap = false;
       const limit = sortedArray.length - 1;
@@ -32,7 +33,6 @@ class Visual extends Component {
         sortedArray = sortedArray.map(bar => {
           return { number: bar.number, beingSorted: false };
         });
-        console.log(sortedArray[i].number, sortedArray[i - 1].number);
         sortedArray[i].beingSorted = true;
         sortedArray[i - 1].beingSorted = true;
         this.setState({ numbers: sortedArray });
@@ -47,11 +47,12 @@ class Visual extends Component {
         if (i > limit) {
           if (swap) {
             this.bubbleSort();
+          } else {
+            this.setState({ done: true });
           }
           clearInterval(myLoop);
         }
-      }, time);
-      console.log('done', swap);
+      }, this.state.time);
 
       this.setState({ numbers: sortedArray });
     }
@@ -66,21 +67,24 @@ class Visual extends Component {
   };
 
   render() {
-    return (
-      <>
-        <button onClick={this.bubbleSort}>Visualize</button>
-        <button onClick={this.testFunction}>Test</button>
-        <div className="visual">
-          {this.state.numbers.map((bar, index) => (
-            <div
-              key={index}
-              className={`bar ${bar.beingSorted && 'current-bar'}`}
-              style={{ height: `${bar.number * 5}px` }}
-            ></div>
-          ))}
-        </div>
-      </>
-    );
+    if (this.state.numbers) {
+      return (
+        <>
+          <div className="visual">
+            {this.state.numbers.map((bar, index) => (
+              <div
+                key={index}
+                className={`bar ${bar.beingSorted && 'current-bar'} ${this.state
+                  .done && 'done-bar'}`}
+                style={{ height: `${bar.number * 5}px` }}
+              ></div>
+            ))}
+          </div>
+        </>
+      );
+    } else {
+      return <h1>Hold on</h1>;
+    }
   }
 }
 
