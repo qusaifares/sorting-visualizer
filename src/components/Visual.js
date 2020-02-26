@@ -5,13 +5,16 @@ class Visual extends Component {
     super(props);
     this.state = {
       numbers: [],
-      time: 20,
-      done: false
+      time: 50,
+      done: false,
+      bubbleLimit: 0
     };
   }
 
   componentDidMount() {
-    this.setState({ numbers: this.props.numbers });
+    this.setState({ numbers: this.props.numbers }, () =>
+      this.setState({ bubbleLimit: this.state.numbers.length - 1 })
+    );
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -25,7 +28,7 @@ class Visual extends Component {
     let swap = true;
     while (swap) {
       swap = false;
-      const limit = sortedArray.length - 1;
+      let limit = this.state.bubbleLimit;
       let i = 1;
 
       // eslint-disable-next-line no-loop-func
@@ -46,6 +49,7 @@ class Visual extends Component {
         i++;
         if (i > limit) {
           if (swap) {
+            this.setState({ bubbleLimit: this.state.bubbleLimit - 1 });
             this.bubbleSort();
           } else {
             this.setState({ done: true });

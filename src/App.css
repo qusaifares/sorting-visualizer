@@ -23,7 +23,6 @@ body {
     transparent 19.5%,
     fadeout(#aaa, 30%) 20%
   );
-  transform: scale(0.6);
 }
 
 .bar {
